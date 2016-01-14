@@ -1,4 +1,4 @@
-class Boss:
+class monDAO:
     def __init__(self, name, theme, damage):
         self.name = name
         self.theme = theme

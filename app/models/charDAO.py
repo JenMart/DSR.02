@@ -1,6 +1,6 @@
 import sqlite3
 
-class Character:
+class CharDAO:
     def __init__(self, name, job, health, marker=0, runs = 0):
         self.name = name
         self.job = job

@@ -1,9 +1,9 @@
 import sqlite3
 import os
 
-from app.models.boss import Boss
-from app.models.character import Character
-from app.models.dungeon import Dungeon
+from app.models.monDAO import monDAO
+from app.models.charDAO import CharDAO
+from app.models.dunDAO import DunDAO
 
 
 
@@ -84,7 +84,7 @@ class DatabaseManager:
         # Starting information
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
-
+        print("seeding now")
         monsters = ['Dragon', 'Slime', 'Wolf','Ghost', 'Zombie','Spider', 'Bat', 'Rat','Ghoul','Vampire', 'Bear', 'Cyclops', 'Witch' 'Warlock', 'Mummy', 'Werewolf', 'Harpy', 'Hydra', 'Griffon', 'Crab', 'Roc','Mermaid', 'Nymph', 'Ifrit', 'Phoenix']
         types = ['earth', 'air', 'earth', 'undead', 'undead','earth', 'earth', 'earth', 'undead', 'undead', 'earth', 'earth', 'earth', 'earth', 'undead', 'undead', 'air', 'water', 'air', 'water', 'air', 'water', 'water', 'air', 'air']
         health = [10,2,5,2,4,1,1,1,5,8,4,2,6,4,3,7,5,8,3,1,1,4,2,3,1]
@@ -102,6 +102,7 @@ class DatabaseManager:
 
         conn.commit()
         conn.close()
+        return
 
     #
     #   Test function.
@@ -111,8 +112,15 @@ class DatabaseManager:
     def storeTweets(self,name,text,date):
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
-        print("Adding user data to Database")
-        c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name,text,date))
+        p = conn.cursor()
+        p.execute("SELECT * FROM PLAYERS WHERE USERNAME = ?",(name,))
+        check = p.fetchall()
+        if check == 0:
+            print("Adding user data to Database")
+            c.execute("INSERT INTO PLAYERS VALUES (?, ?, ?)", (name,text,date))
+        else:
+            print("Updating current player data")
+            c.execute("UPDATE PLAYERS SET USERNAME = ? AND STEP = ? AND DATESTAMP = ?", (name, text, str(date)))
         conn.commit()
         conn.close()
         return
@@ -122,7 +130,7 @@ class DatabaseManager:
         conn = sqlite3.connect('DunSuciRun.sqlite')
         t = conn.cursor()
         # self.setup()
-        t.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THSI AFTER TESTING!! -jm
+        # t.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THIS AFTER TESTING!! -jm
         t.execute("""SELECT * FROM PLAYERS WHERE USERNAME = ? AND STEP = ? AND DATESTAMP = ?""", (name, text, str(date)))
         tweets = t.fetchall()
         conn.commit()
@@ -149,16 +157,16 @@ class DatabaseManager:
         # Make bosses
         for boss in bosses:
             print(boss)
-            b = Boss(boss[0], boss[1], boss[2])
+            b = monDAO(boss[0], boss[1], boss[2])
             b.talk()
 
         for dungeon in dungeons:
             print(dungeon)
-            d = Dungeon(dungeon[0], dungeon[1], dungeon[2])
+            d = DunDAO(dungeon[0], dungeon[1], dungeon[2])
             d.sign()
 
         for character in characters:
             print(character)
-            a = Character(character[0], character[1], character[2])
+            a = CharDAO(character[0], character[1], character[2])
             a.announce()
         conn.close()

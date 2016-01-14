@@ -1,4 +1,4 @@
-class Dungeon:
+class DunDAO:
     def __init__(self, name, theme, difficulty):
         self.name = name
         self.theme = theme

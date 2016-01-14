@@ -33,7 +33,7 @@ class twtrManager(StreamListener):
 
         if (check): #If not, add to DB
             self.db_manager.storeTweets(screenName,txt,createDate)
-            self.printTweet(screenName,self.handleChoice(txt))
+            self.printTweet(screenName,self.handleChoice(txt, screenName))
 
 
 
@@ -64,16 +64,15 @@ class twtrManager(StreamListener):
         # print text
         return
 
-    def handleChoice(self, input):
+    def handleChoice(self, input, userName):
 
         choice = input.lower()
         reslt = ""
         while True:
             if "new" in choice:
-                print("pip1")
-                reslt = self.game_manager.new_game()
+                reslt = self.game_manager.new_game(userName)
             elif "continue" in choice:
-                reslt = self.game_manager.dungeon_pick()
+                reslt = self.game_manager.dungeon_pick(userName)
             elif "about" in choice:
                 reslt = self.game_manager.instructions()
             else:

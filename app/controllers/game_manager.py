@@ -2,9 +2,9 @@ import sqlite3
 import random
 
 from app.controllers.db_manager import DatabaseManager
-from app.models.boss import Boss
-from app.models.character import Character
-from app.models.dungeon import Dungeon
+from app.models.monDAO import monDAO
+from app.models.charDAO import CharDAO
+from app.models.dunDAO import DunDAO
 
 
 class GameManager:
@@ -18,7 +18,7 @@ class GameManager:
     #
     #   Continue
     #
-    def new_game(self):
+    def new_game(self, userName):
         text = ""
         firstHalf = "Ger Sym Hugh Ger Byssh Riff Vin Heg Gile Gau Ewl Gyl" \
                   "Rar Helm Thu Coel Erf Cane folke Knet Lenth Dene Hav Tun Thun".split() #24
@@ -71,7 +71,7 @@ class GameManager:
             nickName = "the " + nickName
         else:
             nickName = "of the " + nickName + "s"
-        fullName = name + " " + nickName
+        fullName = name #Getting rid of nicknames for the moment.
         gold = random.randint(1,5)
         job = ["Warrior", "Thief","Barbarian","Warrior Priest","Knight","Paladin"]
         youJob =  job[random.randint(1,5)]
@@ -84,22 +84,19 @@ class GameManager:
 
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
-        p = conn.cursor()
         ch= conn.cursor()
-        p.execute("SELECT USERNAME FROM PLAYERS")
-        getUser = p.fetchall()
-        userName = getUser[0][0]
+
         ch.execute("SELECT PLAYER FROM CHARACTERS WHERE PLAYER = ?",(userName,))
         check = ch.fetchall()
-        if len(check) > 1: #Checks if user already has a character and replaces current character if yes
+        if len(check) == 0: #Checks if user already has a character and replaces current character if yes
             c.execute('INSERT INTO CHARACTERS VALUES (?,?,?,?,?)', (userName, fullName, youJob, health, gold))
         else:
-            c.execute('UPDATE CHARACTERS SET NAME = ?, JOB = ?, HEALTH = ?,  GOLD = ? WHERE PLAYER = ?', (fullName, youJob, health, gold, userName))
+            text = "You already possess a character"
 
         conn.commit()
         conn.close()
 
-        new_char = Character(fullName, youJob, health)
+        new_char = CharDAO(fullName, youJob, health)
         return text
 
     def continue_game(self):
@@ -110,36 +107,19 @@ class GameManager:
         self.menu_manager.title_screen()
 
     def instructions(self):
-        self.twtr_manager.printTweet('You are an adventurer tasked with rid the world of evil. There is no rest. Every battle brings you closer to death.')
-
-        self.menu_manager.continue_prompt()
-        self.menu_manager.title_screen()
+        text = 'You are an adventurer tasked with rid the world of evil. There is no rest. Every battle brings you closer to death.'
+        return text
 
 
-    def player_stats(self, user):
-        print "stuff later"
 
-    def dungeon_pick(self, name):
+    def player_stats(self, useName):
+        text = "stuff later"
+        return text
+
+    def dungeon_pick(self, userName):
 
             try:
-                self.twtr_manager.printTweet("What level of dungeon would you like? (Easy, Medium or Hard)")
-                level = self.twtr_manager.homeTimeline()
-                level = level.lower()
-                #Changed to text.
                 level = 1
-                # if "easy" in level: #keeps getting stuck in try/catch error
-                #     self.twtr_manager.printTweet("You selected: Easy")
-                #     level = 1
-                # elif "medium" in level:
-                #     self.twtr_manager.printTweet("You selected: Medium")
-                #     level = 2
-                # elif "hard" in level:
-                #     self.twtr_manager.printTweet("You selected: Hard")
-                #     level = 3
-                # else:
-                #     self.twtr_manager.printTweet('Level not recognized. Please choose Easy, Medium or Hard.')
-                #     self.dungeon_pick(name)
-
 
                 if 1 <= level <= 3:
                     conn = sqlite3.connect('DunSuciRun.sqlite')
@@ -149,32 +129,37 @@ class GameManager:
                     p = conn.cursor()
                     c.execute('SELECT * FROM DUNGEONS WHERE DIFFICULTY =' + str(level))
                     dungeons = c.fetchall()
-                    p.execute('SELECT * FROM PLAYERS')
+                    p.execute('SELECT * FROM CHARACTERS')
                     getDate = p.fetchall()
-                    useName = getDate[0][0]
-                    gold = getDate[4][0] #I could have this backwards
+                    if len(getDate) == 0:
+                        return "You have no character!"
+                    else:
+                        print(getDate)
+                        gold = getDate[0][4]
+                        name = getDate[0][1]
+                        hp = getDate[0][3]
+                        randomNum= random.randint(0, len(dungeons)-1)
+                        newTuple = dungeons[randomNum]
+                        dun = DunDAO(newTuple[0], newTuple[1], newTuple[2]) #
+                        dun.sign()
+                        m.execute('SELECT * FROM BIGSCARIES WHERE THEME =?',(dun.theme,))
+                        monsters = m.fetchall()
+                        randoMon = random.randint(0, len(monsters)-1)
+                        monsterTuple = monsters[randoMon]
+                        mob = monDAO(monsterTuple[0], monsterTuple[1], int(monsterTuple[2]))
+                        horde = random.randint(0,(level*dun.difficulty)) + gold
+                        #Updates character date with new health and treasure
+                        n.execute('UPDATE CHARACTERS SET HEALTH = ?, GOLD = ? WHERE PLAYER = ?',(str((hp - (mob.damage*dun.difficulty))), horde, userName))
+                        conn.commit()
+                        conn.close()
 
-                    randomNum= random.randint(0, len(dungeons)-1)
-                    newTuple = dungeons[randomNum]
-                    dun = Dungeon(newTuple[0],newTuple[1],newTuple[2]) #
-                    dun.sign()
-                    m.execute('SELECT * FROM BIGSCARIES WHERE THEME =?',(dun.theme,))
-                    monsters = m.fetchall()
-                    randoMon = random.randint(0, len(monsters)-1)
-                    monsterTuple = monsters[randoMon]
-                    mob = Boss(monsterTuple[0], monsterTuple[1], int(monsterTuple[2]))
-                    horde = random.randint(0,(level*dun.difficulty))
-                    #Updates character date with new health and treasure
-                    n.execute('UPDATE CHARACTERS SET HEALTH = ?, GOLD = ? WHERE NAME = ?',(str((name.health - (mob.damage*dun.difficulty))), horde, useName))
-                    conn.commit()
-                    conn.close()
-
-                    self.twtr_manager.printTweet("You slay a " + mob.name + " and collect " + str(horde) + " gold! " "It hurt you for " + str((mob.damage*dun.difficulty)) + " damage.")
+                        text = ("You slay a " + mob.name + " and collect " + str(horde) + " gold! but hurts you for " + str((mob.damage*dun.difficulty)) + " damage.")
+                        return text
                 else:
-                    self.twtr_manager.printTweet('Level not recognized. Please choose 1, 2, or 3.')
-                    self.dungeon_pick(name)
+                    print("You shouldn't be able to get here")
+                    self.dungeon_pick(userName)
 
             except StandardError as e:
-                self.twtr_manager.printTweet('Level not recognized. Please choose Easy, Medium or Hard.')
+                print('Try/catch error occured: ' + e)
                 # self.menu_manager.write('Level not recognized. Please choose Easy, Medium or Hard.')
-                self.dungeon_pick(name)
+                self.dungeon_pick(userName)
