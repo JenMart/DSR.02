@@ -47,6 +47,7 @@ class twtrManager(StreamListener):
         print(status)
 
     def printTweet(self, user, text):
+        #Remember: You have exactly 123 characters to tell a story. Waste none in the struggle.
         auth = tweepy.OAuthHandler(ckey, csecret)
         auth.set_access_token(atoken, asecret)
         api = tweepy.API(auth)
@@ -75,8 +76,10 @@ class twtrManager(StreamListener):
                 reslt = self.game_manager.dungeon_pick(userName)
             elif "about" in choice:
                 reslt = self.game_manager.instructions()
+            elif "who" in choice:
+                reslt = self.game_manager.player_stats(userName)
             else:
-                print("pip2")
+                reslt = self.game_manager.player_options()
                 # self.twtr_manager.printTweet("That is not a valid choice.")
                 # self.prompt('main_menu')
             try:

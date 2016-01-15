@@ -2,6 +2,7 @@ import sqlite3
 import random
 
 from app.controllers.db_manager import DatabaseManager
+
 from app.models.monDAO import monDAO
 from app.models.charDAO import CharDAO
 from app.models.dunDAO import DunDAO
@@ -12,6 +13,9 @@ class GameManager:
     def __init__(self, db_manager):
         self.db_manager = DatabaseManager(self)
 
+
+
+
     def test(self):
         testing = "testing"
         return testing
@@ -20,7 +24,7 @@ class GameManager:
     #
     def new_game(self, userName):
         text = ""
-        firstHalf = "Ger Sym Hugh Ger Byssh Riff Vin Heg Gile Gau Ewl Gyl" \
+        firstHalf = "Ger Sym Hugh Ger Byssh Riff Vin Heg Gile Gau Ewl Gyl Van Syn Garth Par" \
                   "Rar Helm Thu Coel Erf Cane folke Knet Lenth Dene Hav Tun Thun".split() #24
 
         seconHalf = "y ey te nah ney ley walt wort man der dar dor da ness ke fin son kin".split() #18
@@ -37,19 +41,19 @@ class GameManager:
 
         # Total of 456 first name combinations
         if (random.randint(0,1) == 0): #Flips coin, determins if name will have one or two syllables
-            firstName = firstHalf[random.randint(0,23)] + seconHalf[random.randint(0,17)]
+            firstName = random.choice(firstHalf) + random.choice(seconHalf)
         else:
-            firstName = firstHalf[random.randint(0,23)]
+            firstName = random.choice(firstHalf)
 
         if (random.randint(0,1) == 0):#Flips coin, determins if name will have one or two syllables
-            secondName = firstHalf[random.randint(0,23)] + seconHalf[random.randint(0,17)]
+            secondName = random.choice(firstHalf) + random.choice(seconHalf)
         else:
-            secondName = firstHalf[random.randint(0,23)]
+            secondName = random.choice(firstHalf)
         while(firstName == secondName): #If first and last name are both the same, remakes last name.
             if (random.randint(0,1) == 0):
-                secondName = firstHalf[random.randint(0,24)] + seconHalf[random.randint(0,17)]
+                secondName = random.choice(firstHalf) + random.choice(seconHalf)
             else:
-                secondName = firstHalf[random.randint(0,24)]
+                firstName = random.choice(firstHalf)
         name = firstName + " " + secondName
 
         if (random.randint(0,1) == 0):
@@ -99,12 +103,6 @@ class GameManager:
         new_char = CharDAO(fullName, youJob, health)
         return text
 
-    def continue_game(self):
-        self.printTweet(self.menu_manager.title('Continue Game'))
-        player = self.player_game()
-        self.dungeon_pick(player)
-        self.menu_manager.continue_prompt()
-        self.menu_manager.title_screen()
 
     def instructions(self):
         text = 'You are an adventurer tasked with rid the world of evil. There is no rest. Every battle brings you closer to death.'
@@ -113,9 +111,22 @@ class GameManager:
 
 
     def player_stats(self, useName):
-        text = "stuff later"
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        p = conn.cursor()
+        p.execute("SELECT * FROM CHARACTERS WHERE PLAYER = ?", (useName,))
+        charData = p.fetchall()
+        charName = charData[0][1]
+        charClass = charData[0][2]
+        charHealth= charData[0][3]
+        charWealth = charData[0][4]
+        text = "You are " + charName + " a " + charClass + ". You possess " + charWealth + \
+               " gold and your health is " + charHealth + "."
         return text
 
+
+    def player_options(self):
+        text = "Your options are: make a [new] character, " \
+               "learn about [who] you are or [continue] on. You may also learn [about] this world"
     def dungeon_pick(self, userName):
 
             try:
@@ -129,7 +140,7 @@ class GameManager:
                     p = conn.cursor()
                     c.execute('SELECT * FROM DUNGEONS WHERE DIFFICULTY =' + str(level))
                     dungeons = c.fetchall()
-                    p.execute('SELECT * FROM CHARACTERS')
+                    p.execute('SELECT * FROM CHARACTERS WHERE PLAYER = ?', (userName,))
                     getDate = p.fetchall()
                     if len(getDate) == 0:
                         return "You have no character!"
@@ -161,5 +172,4 @@ class GameManager:
 
             except StandardError as e:
                 print('Try/catch error occured: ' + e)
-                # self.menu_manager.write('Level not recognized. Please choose Easy, Medium or Hard.')
                 self.dungeon_pick(userName)

@@ -85,7 +85,7 @@ class DatabaseManager:
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
         print("seeding now")
-        monsters = ['Dragon', 'Slime', 'Wolf','Ghost', 'Zombie','Spider', 'Bat', 'Rat','Ghoul','Vampire', 'Bear', 'Cyclops', 'Witch' 'Warlock', 'Mummy', 'Werewolf', 'Harpy', 'Hydra', 'Griffon', 'Crab', 'Roc','Mermaid', 'Nymph', 'Ifrit', 'Phoenix']
+        monsters = ['Dragon', 'Slime', 'Wolf','Ghost', 'Zombie','Spider', 'Bat', 'Rat','Ghoul','Vampire', 'Bear', 'Cyclops', 'Witch', 'Warlock', 'Mummy', 'Werewolf', 'Harpy', 'Hydra', 'Griffon', 'Crab', 'Roc','Mermaid', 'Nymph', 'Ifrit', 'Phoenix']
         types = ['earth', 'air', 'earth', 'undead', 'undead','earth', 'earth', 'earth', 'undead', 'undead', 'earth', 'earth', 'earth', 'earth', 'undead', 'undead', 'air', 'water', 'air', 'water', 'air', 'water', 'water', 'air', 'air']
         health = [10,2,5,2,4,1,1,1,5,8,4,2,6,4,3,7,5,8,3,1,1,4,2,3,1]
         for i in range(len(monsters)):
