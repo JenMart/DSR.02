@@ -7,6 +7,7 @@ from app.models.dunDAO import DunDAO
 
 
 
+
 #
 #   DatabaseManager
 #
@@ -34,6 +35,8 @@ class DatabaseManager:
         print('deleting database')
         if os.path.isfile('DunSuciRun.sqlite'):
            os.remove('DunSuciRun.sqlite')
+    def thingTest(self):
+        print("this is a thing")
 
     #
     #   Sets up the database for the first time, then seeds it.
@@ -45,16 +48,26 @@ class DatabaseManager:
         print("Creating database")
 
         char = """ CREATE TABLE CHARACTERS (
-            PLAYER VARCHAR(255),
+            PLAYER VARCHAR(255) NOT NULL,
             NAME VARCHAR(255) NOT NULL,
             JOB VARCHAR(255) NOT NULL,
             HEALTH INT NOT NULL,
-            GOLD INT NOT NULL)"""
+            GOLD INT NOT NULL,
+            RUNS INT NOT NULL,
+            ORG VARCHAR(255),
+            WEAPON VARCHAR(255) NOT NULL,
+            RARM VARCHAR(255) NOT NULL,
+            LARM VARCHAR(255) NOT NULL,
+            RLEG VARCHAR(255) NOT NULL,
+            LLEG VARCHAR(255) NOT NULL,
+            HEAD VARCHAR(255) NOT NULL,)"""
 
         dungeons = """ CREATE TABLE DUNGEONS (
             NAME VARCHAR(255) NOT NULL,
             THEME VARCHAR(255) NOT NULL,
-            DIFFICULTY INT NOT NULL )"""
+            DIFFICULTY INT NOT NULL,
+            LEVELS INT NOT NULL,
+            LEVELSCLEARED INT NOT NULL,)"""
 
         bosses = """ CREATE TABLE BIGSCARIES (
             NAME VARCHAR(255) NOT NULL,
@@ -64,12 +77,33 @@ class DatabaseManager:
             USERNAME VARCHAR(255) NOT NULL,
                 STEP VARCHAR(255) NOT NULL,
                 DATESTAMP VARCHAR(255) NOT NULL )"""
+        graveyard = """CREATE TABLE FALLEN (
+            PLAYER VARCHAR(255) NOT NULL,
+            NAME VARCHAR(255) NOT NULL,
+            JOB VARCHAR(255) NOT NULL,
+            GOLD INT NOT NULL,
+            RUNS INT NOT NULL,
+            WEAPON VARCHAR(255) NOT NULL,
+            DUNGEON VARCHAR(255) NOT NULL,
+            DLEVEL INT NOTNULL,
+            MON VARCHAR(255) NOT NULL,
+            LOOTED VARCHAR(255) NOT NULL),
+
+        )"""
+        organizations = """CREATE TABLE ORGANISATIONS(
+            NAME VARCHAR(255) NOT NULL,
+            LEADER VARCHAR(255) NOT NULL,
+            TYPE VARCHAR(255) NOT NULL,
+            MEMNUMBER INT NOT NULL,
+            ISACTIVE VARCHAR(255) NOT NULL,
+            STR VARCHAR(255) NOT NULL,
+            WEAKNESS VARCHAR(255) NOT NULL,
+         )"""
 
         c.execute(char)
         c.execute(dungeons)
         c.execute(bosses)
         c.execute(players)
-        # c.execute(playerActions)
 
         conn.commit()
         conn.close()
