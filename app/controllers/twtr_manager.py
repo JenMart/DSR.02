@@ -8,10 +8,10 @@ from game_manager import GameManager
 from db_manager import DatabaseManager
 
 
-ckey= ''
-csecret= ''
-atoken= ''
-asecret= ''
+ckey= '*'
+csecret= '*'
+atoken= '*'
+asecret= '*'
     #Canekin GylRarkin the first Paladin & Thun Lenth the last Barbarian. The immortal lords.
 
 class twtrManager(StreamListener):
@@ -22,13 +22,13 @@ class twtrManager(StreamListener):
     # """
 
     def on_status(self, status):
+
         self.db_manager = DatabaseManager(self)
         self.game_manager = GameManager()
         screenName = status.author.screen_name
         createDate = str(status.created_at)
         txt = status.text
         txt = txt.replace("@DunSuciRun","")
-
         print(txt)
         try:
             thread.start_new_thread(self.handleChoice,(txt, screenName,createDate,))
@@ -38,7 +38,8 @@ class twtrManager(StreamListener):
         print(status)
 
     def handleChoice(self, input, userName,createDate):
-
+        # self.db_manager = DatabaseManager(self)
+        # self.db_manager.setup()
         check = self.db_manager.checkTweets(userName,input,createDate)
         if (check): #If not, add to DB
             self.db_manager.storeTweets(userName,input,createDate)
@@ -48,7 +49,6 @@ class twtrManager(StreamListener):
         while True:
             if "new" in choice:
                 reslt = self.game_manager.new_game(userName)
-                # reslt = self.game_manager.player_options()
             elif "continue" in choice:
                 reslt = self.game_manager.dungeon_pick(userName)
             elif "about" in choice:

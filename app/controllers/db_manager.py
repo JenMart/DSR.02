@@ -1,3 +1,4 @@
+import random
 import sqlite3
 import os
 
@@ -56,40 +57,42 @@ class DatabaseManager:
             RUNS INT NOT NULL,
             ORG VARCHAR(255),
             WEAPON VARCHAR(255) NOT NULL,
+            MAP VARCHAR(255),
             RARM VARCHAR(255) NOT NULL,
             LARM VARCHAR(255) NOT NULL,
             RLEG VARCHAR(255) NOT NULL,
             LLEG VARCHAR(255) NOT NULL,
-            HEAD VARCHAR(255) NOT NULL,)"""
+            HEAD VARCHAR(255) NOT NULL)"""
 
         dungeons = """ CREATE TABLE DUNGEONS (
             NAME VARCHAR(255) NOT NULL,
             THEME VARCHAR(255) NOT NULL,
             DIFFICULTY INT NOT NULL,
             LEVELS INT NOT NULL,
-            LEVELSCLEARED INT NOT NULL,)"""
+            LVLSCLEARED INT NOT NULL)"""
 
         bosses = """ CREATE TABLE BIGSCARIES (
             NAME VARCHAR(255) NOT NULL,
             THEME VARCHAR(255) NOT NULL,
             DAMAGE INT NOT NULL)"""
+
         players = """ CREATE TABLE PLAYERS (
             USERNAME VARCHAR(255) NOT NULL,
                 STEP VARCHAR(255) NOT NULL,
-                DATESTAMP VARCHAR(255) NOT NULL )"""
+                DATESTAMP VARCHAR(255) NOT NULL)"""
+
         graveyard = """CREATE TABLE FALLEN (
             PLAYER VARCHAR(255) NOT NULL,
             NAME VARCHAR(255) NOT NULL,
             JOB VARCHAR(255) NOT NULL,
             GOLD INT NOT NULL,
             RUNS INT NOT NULL,
+            MAP VARCHAR(255),
             WEAPON VARCHAR(255) NOT NULL,
             DUNGEON VARCHAR(255) NOT NULL,
-            DLEVEL INT NOTNULL,
+            DLEVEL INT NOT NULL,
             MON VARCHAR(255) NOT NULL,
-            LOOTED VARCHAR(255) NOT NULL),
-
-        )"""
+            LOOTED VARCHAR(255) NOT NULL)"""
         organizations = """CREATE TABLE ORGANISATIONS(
             NAME VARCHAR(255) NOT NULL,
             LEADER VARCHAR(255) NOT NULL,
@@ -97,18 +100,19 @@ class DatabaseManager:
             MEMNUMBER INT NOT NULL,
             ISACTIVE VARCHAR(255) NOT NULL,
             STR VARCHAR(255) NOT NULL,
-            WEAKNESS VARCHAR(255) NOT NULL,
-         )"""
+            WEAKNESS VARCHAR(255) NOT NULL)"""
 
         c.execute(char)
         c.execute(dungeons)
         c.execute(bosses)
         c.execute(players)
+        c.execute(graveyard)
+        c.execute(organizations)
 
         conn.commit()
         conn.close()
 
-        # self.seed()
+        self.seed()
 
     #
     #   Fills the database with seed data.
@@ -126,12 +130,12 @@ class DatabaseManager:
             print ("Add " + monsters[i] + " to database")
             c.execute("INSERT INTO BIGSCARIES VALUES (?, ?, ?)", (monsters[i], types[i], health[i]))
 
-        dungeonname = ['Dungeon of Death', 'Scary Eyrie', 'Julies Crypt', 'Bastion Hold', 'Caverns of Remorse', 'The Whispering Maze', 'Grizzly Vale','Chambers of Red Viper', 'The White Abyss', 'The Wading Seas', 'Pheia Bay' 'Zephyrs Bluff', 'Heavens Toilet']
+        dungeonname = ['Dungeon of Death', 'Scary Eyrie', 'Julies Crypt', 'Bastion Hold', 'Caverns of Remorse', 'The Whisper Maze', 'Grizzly Vale','Chamber of Vipers', 'The White Abyss', 'The Wading Seas', 'Pheia Bay' 'Zephyrs Bluff', 'Heavens fall']
         theme = ['earth', 'air', 'undead', 'earth', 'undead', 'undead', 'earth', 'air', 'water', 'water','water', 'air', 'air']
         difficulty = [3,2,1,1,2,2,3,3,1,2,3,1,2]
         for d in range(len(dungeonname)):
             print ("Add " + dungeonname[d] + " to database")
-            c.execute("INSERT INTO DUNGEONS VALUES (?,?,?)", (dungeonname[d], theme[d], difficulty[d]))
+            c.execute("INSERT INTO DUNGEONS VALUES (?,?,?,?,?)", (dungeonname[d], theme[d], difficulty[d],random.randint(20,100),0))
 
 
         conn.commit()
