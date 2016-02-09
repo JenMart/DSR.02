@@ -12,25 +12,25 @@ ckey= '*'
 csecret= '*'
 atoken= '*'
 asecret= '*'
-    #Canekin GylRarkin the first Paladin & Thun Lenth the last Barbarian. The immortal lords.
 
 class twtrManager(StreamListener):
-
+    def __init__(self):
+        self.db_manager = DatabaseManager(self)
+        self.game_manager = GameManager()
 
     """ A listener handles tweets that are received from the stream.
     This is a basic listener that just prints received tweets to stdout.
     # """
 
     def on_status(self, status):
-
-        self.db_manager = DatabaseManager(self)
-        self.game_manager = GameManager()
+        # Status object holds all twitter user info objects
         screenName = status.author.screen_name
         createDate = str(status.created_at)
         txt = status.text
         txt = txt.replace("@DunSuciRun","")
         print(txt)
         try:
+            # Takes data and starts new thread.
             thread.start_new_thread(self.handleChoice,(txt, screenName,createDate,))
         except:
             print("unable to start thread")
@@ -38,8 +38,6 @@ class twtrManager(StreamListener):
         print(status)
 
     def handleChoice(self, input, userName,createDate):
-        # self.db_manager = DatabaseManager(self)
-        # self.db_manager.setup()
         check = self.db_manager.checkTweets(userName,input,createDate)
         if (check): #If not, add to DB
             self.db_manager.storeTweets(userName,input,createDate)
@@ -68,10 +66,12 @@ class twtrManager(StreamListener):
 
 if __name__ == '__main__':
     l = twtrManager()
+    #Starts twitter scrape
     auth = OAuthHandler(ckey, csecret)
     auth.set_access_token(atoken, asecret)
 
     stream = Stream(auth, l)
+    #Filters results to only display @DunSuciRun
     stream.filter(track=['@DunSuciRun'])
 
 

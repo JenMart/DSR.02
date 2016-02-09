@@ -6,9 +6,6 @@ from app.models.monDAO import monDAO
 from app.models.charDAO import CharDAO
 from app.models.dunDAO import DunDAO
 
-
-
-
 #
 #   DatabaseManager
 #
@@ -167,8 +164,6 @@ class DatabaseManager:
 
         conn = sqlite3.connect('DunSuciRun.sqlite')
         t = conn.cursor()
-        # self.setup()
-        # t.execute("DELETE FROM PLAYERS") #MAKE SURE TO REMOVE THIS AFTER TESTING!! -jm
         t.execute("""SELECT * FROM PLAYERS WHERE USERNAME = ? AND STEP = ? AND DATESTAMP = ?""", (name, text, str(date)))
         tweets = t.fetchall()
         conn.commit()

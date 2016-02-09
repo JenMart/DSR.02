@@ -10,9 +10,10 @@ asecret= '*'
 
 class TwtPrinter:
     def printTweet(self, user, text):
-        #Remember: You have exactly 123 characters to tell a story. Waste none in the struggle.
+        #Remember: You have exactly 123 characters to tell a story.
         auth = tweepy.OAuthHandler(ckey, csecret)
         auth.set_access_token(atoken, asecret)
+
         api = tweepy.API(auth)
         message = "@" + user  + " " + text
         for status in tweepy.Cursor(api.user_timeline).items():
@@ -21,7 +22,6 @@ class TwtPrinter:
                     api.destroy_status(status.id)
                 except:
                     pass
-        # message = "@" + user  + " " + text
         time.sleep(random.randint(1,3))
         print(message)
         api.update_status(status=message)
