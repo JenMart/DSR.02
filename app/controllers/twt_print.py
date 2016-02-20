@@ -8,6 +8,7 @@ csecret= '*'
 atoken= '*'
 asecret= '*'
 
+
 class TwtPrinter:
     def printTweet(self, user, text):
         #Remember: You have exactly 123 characters to tell a story.

@@ -122,9 +122,9 @@ class GameManager:
             goldText = "a single coin they join the battle"
 
         if "twin" in weapon:
-            text = "The " + youJob + ", " + fullName + " enters the land. with " + weapon + " and " + goldText
+            text =  fullName + " The " + youJob + " enters the land. with " + weapon + " and " + goldText
         else:
-            text = "The " + youJob + ", " + fullName + " enters the land. with a " + weapon + " and " + goldText
+            text = fullName + " The " + youJob + " enters the land. with a " + weapon + " and " + goldText
         conn = sqlite3.connect('DunSuciRun.sqlite')
         c = conn.cursor()
         ch= conn.cursor()
@@ -167,7 +167,6 @@ class GameManager:
         conn.commit()
         conn.close()
 
-
     def instructions(self,userName):
         #A story in 123 characters.
         text = 'You are one of the Last to resist The End. There is no rest. Each struggle calls you closer to death. Now fight on.'
@@ -202,6 +201,124 @@ class GameManager:
                "learn about [who] you are or [continue] on. You may also learn [about] this world"
         self.twt_print.printTweet(userName,text)
 
+    def the_road_monster(self, userName):
+        # player|name|job|health|gold|runs|org|weapon|map|RARM|LARM|RLEG|LLEG|HEAD
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        d = conn.cursor()
+        c = conn.cursor()
+        d.execute('SELECT * FROM BIGSCARIES')
+        c.execute('SELECT * FROM CHARACTERS WHERE PLAYER = ?', (userName,))
+        monsters = d.fetchall()
+        character = c.fetchall()
+        dmg = random.randint(1,8)
+        randoMon = random.randint(0, len(monsters)-1)
+        monsterTuple = monsters[randoMon]
+        mob = monDAO(monsterTuple[0], monsterTuple[1], int(monsterTuple[2]))
+        try:
+            if len(character) == 0:
+                text = "The End cannot be overcome by those that standby and observe"
+                # self.twt_print.printTweet(userName,text)
+            else:
+                charTuple = character[0]
+                cha = CharDAO(charTuple[0], charTuple[1],charTuple[2],charTuple[3],charTuple[4], charTuple[5], charTuple[6],
+                                              charTuple[7], charTuple[8], charTuple[9], charTuple[10], charTuple[11], charTuple[12], charTuple[13])
+
+                text = "On the road " + cha.name.split(' ')[0] + " encounters a " + mob.name + ". " + cha.name.split(' ')[0] + " overcame it with their " + cha.weapon.split(' ')[-1] + \
+                       " but took " + str(dmg) + " wound. DunSuRu grows safer"
+
+            c.execute("UPDATE CHARACTERS SET HEALTH = ? WHERE PLAYER = ?",(str(cha.health-dmg),userName))
+            conn.commit()
+            conn.close()
+            self.twt_print.printTweet(userName,text)
+        except Exception as e:
+            print('Try/catch error occured: ' + e)
+
+    def the_road_people(self,userName):
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        c = conn.cursor()
+        c.execute('SELECT * FROM CHARACTERS WHERE PLAYER = ?', (userName,))
+        character = c.fetchall()
+        charTuple = character[0]
+        cha = CharDAO(charTuple[0], charTuple[1],charTuple[2],charTuple[3],charTuple[4], charTuple[5], charTuple[6],
+                                          charTuple[7], charTuple[8], charTuple[9], charTuple[10], charTuple[11], charTuple[12], charTuple[13])
+
+        num = random.randint(0,2)
+
+
+
+        if num == 0:
+            text = "On the roads near DunSuRu "+ cha.name.split(' ')[0] + " comes across a caravan. Though exhausted the eagerly trade Story and Song."
+        elif num == 1:
+            text = "On the road from DunSuRu "+ cha.name.split(' ')[0] + " passes a group of refugees. They pass in silence, fear of The End show in their tired eyes"
+        else:
+            text = cha.name.split(' ')[0] +" travels the roads near DunSuRu but finds no trace of others. The End draws closer."
+
+        conn.commit()
+        conn.close()
+        self.twt_print.printTweet(userName,text)
+
+    def ruins_monster(self, userName):
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        d = conn.cursor()
+        c = conn.cursor()
+        d.execute('SELECT * FROM BIGSCARIES')
+        c.execute('SELECT * FROM CHARACTERS WHERE PLAYER = ?', (userName,))
+        monsters = d.fetchall()
+        character = c.fetchall()
+
+        dmg = random.randint(1,8)
+        randoMon = random.randint(0, len(monsters)-1)
+        monsterTuple = monsters[randoMon]
+        mob = monDAO(monsterTuple[0], monsterTuple[1], int(monsterTuple[2]))
+        try:
+            if len(character) == 0:
+                text = "You must enter the realm first. Go! Begin your stuggle!"
+                # self.twt_print.printTweet(userName,text)
+            else:
+                charTuple = character[0]
+                cha = CharDAO(charTuple[0], charTuple[1],charTuple[2],charTuple[3],charTuple[4], charTuple[5], charTuple[6],
+                                              charTuple[7], charTuple[8], charTuple[9], charTuple[10], charTuple[11], charTuple[12], charTuple[13])
+
+                text =  cha.name.split(' ')[0] + " searches the forgotten ruins for ancient texts but finds a " + mob.name+ ". The battle was quick but " + \
+                        cha.name.split(' ')[0]+ " took " + str(dmg) + " wound"
+
+            c.execute("UPDATE CHARACTERS SET HEALTH = ? WHERE PLAYER = ?",(str(cha.health-dmg),userName))
+            conn.commit()
+            conn.close()
+            self.twt_print.printTweet(userName,text)
+        except Exception as e:
+            print('Try/catch error occured: ' + e)
+
+    def ruins_people(self, userName):
+        conn = sqlite3.connect('DunSuciRun.sqlite')
+        d = conn.cursor()
+        c = conn.cursor()
+        c.execute('SELECT * FROM CHARACTERS WHERE PLAYER = ?', (userName,))
+        character = c.fetchall()
+        charTuple = character[0]
+        cha = CharDAO(charTuple[0], charTuple[1],charTuple[2],charTuple[3],charTuple[4], charTuple[5], charTuple[6],
+                                          charTuple[7], charTuple[8], charTuple[9], charTuple[10], charTuple[11], charTuple[12], charTuple[13])
+
+        num = random.randint(0,2)
+        scrolls = ["a time before The End","a treasure lost to time"," a just king that fell to The End", "a great queen who faced The End", "a duel of knights, wicked and kind",
+                   "immortal lords who ruled for eons.","The Great Snake Who Laughs.","undying warriors corrupt by sorrow","a city of splendor and lights.","The Lady who waits...",
+                   "a sword of heavens, now shattered.","an axe of the races, lost forever.","angels and demons that did nothing"]
+        peeps = ["an ancient crypt.","another settlement of survivors.","keep corrupted with monsters","a castle corrupted with monsters","a hidden trading post.",
+                 "a rumored meeting of adventurers","a fabled ancient library"]
+
+        if num == 0:
+            text = cha.name.split(' ')[0] + " comes across the ruins of a city now forgotten. They are greeted with nothing more than the howls of a " \
+                                        "dying wind"
+        elif num == 1:
+            text =  cha.name.split(' ')[0] + " treads the forgotten ruins and finds a scroll of history. These scrolls speak of " + \
+                    random.choice(scrolls)
+        else:
+            text = cha.name.split(' ')[0] + " meets survivors hidden among the ruins. They speak of sorrow and point the way to " + random.choice(peeps)
+
+        conn.commit()
+        conn.close()
+        self.twt_print.printTweet(userName,text)
+
     def dungeon_pick(self, userName):
 
             try:
@@ -219,7 +336,7 @@ class GameManager:
                     getData = p.fetchall()
                     if len(getData) == 0:
                         text = "To continue, one must begin"
-                        self.twt_print.printTweet(userName,text)
+                        # self.twt_print.printTweet(userName,text)
                     else:
                         charTuple = getData[0]
                         cha = CharDAO(charTuple[0], charTuple[1],charTuple[2],charTuple[3],charTuple[4], charTuple[5], charTuple[6],
@@ -235,13 +352,15 @@ class GameManager:
                         horde = random.randint(0,(level*dun.difficulty)) + cha.gold
                         rns = cha.runs + 1
                         entersAdj= 'runs into,traverses,stalks,enters,charges,assaults'.split(",")
+                        flavText = ['cleave','slice','parry','slam']
                         #Updates character date with new health and treasure
                         if cha.health - (mob.damage*dun.difficulty) >= 0:
                             n.execute('UPDATE CHARACTERS SET HEALTH = ?, GOLD = ?, RUNS = ? WHERE PLAYER = ?',(str((cha.health - (mob.damage*dun.difficulty))), horde,rns, userName))
                             if 'a' in mob.name[0] or 'e' in mob.name[0] or 'i' in mob.name[0] or 'o' in mob.name[0] or 'u' in mob.name[0]:
-                                print "this"
-                            else:
                                 text = cha.name.split(' ')[0] + " " + random.choice(entersAdj) + " " + dun.name + " and slew an " + mob.name + \
+                               " with a mighty cleave. They find " + str(dun.difficulty*random.randint(1,5)) + " gold but take " + str((mob.damage*dun.difficulty)) + " wound"
+                            else:
+                                text = cha.name.split(' ')[0] + " " + random.choice(entersAdj) + " " + dun.name + " and slew a " + mob.name + \
                                " with a mighty cleave. They find " + str(dun.difficulty*random.randint(1,5)) + " gold but take " + str((mob.damage*dun.difficulty)) + " wound"
                         else:
                             # PLAYER|NAME|JOB|GOLD||RUNS|MAP|WEAPON|DUNGEON|DLEVEL|MON|LOOTED
@@ -250,22 +369,15 @@ class GameManager:
                             n.execute('DELETE FROM CHARACTERS WHERE NAME = ?',(cha.name))
 
 
-                        conn.commit()
-                        conn.close()
-
-                        # gathfath enters the whispering maze. With a slice, gathfath slew a mermaid. You find 00 gold but are hurt for 00
-
-                        # text = ("You slay a " + mob.name + " and collect " + str(horde) + " gold! but hurts you for " + str((mob.damage*dun.difficulty)) + " damage.")
-
-
-
+                    conn.commit()
+                    conn.close()
 
                         # return text
-                        self.twt_print.printTweet(userName,text)
+                    self.twt_print.printTweet(userName,text)
                 else:
                     print("You shouldn't be able to get here")
                     self.dungeon_pick(userName)
 
-            except StandardError as e:
+            except Exception as e:
                 print('Try/catch error occured: ' + e)
                 self.dungeon_pick(userName)
