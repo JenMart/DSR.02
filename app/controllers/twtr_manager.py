@@ -8,13 +8,16 @@ from tweepy import Stream
 from app.controllers.db_manager import DatabaseManager
 from app.controllers.game_manager import GameManager
 
+##RUN THE APP FROM HERE STUPID.
 
-ckey= '*'
-csecret= '*'
-atoken= '*'
-asecret= '*'
+ckey= 'rlee33vXmHIlmR5tQljIX0ucD'
+csecret= 'cUiIFESIXSSin9YJHYwLnVwnHpS64Ytj7csY9yFqshvAlkcaPg'
+# After the step above, you will be redirected to your app's page.
+# Create an access token under the the "Your access token" section
+atoken= '2836017980-DxYDsgHqGMyRIq1yH3Uf3Ar63eYCFhqawJAWGOw'
+asecret= 'SruNXYjh0BpY4GQhiflXaxbB2XUhrCMslBrmrH2ViULnu'
 
-
+print("test commit")
 
 class twtrManager(StreamListener):
     # def __init__(self):
@@ -51,9 +54,9 @@ class twtrManager(StreamListener):
         choice = input.lower()
 
         while True:
-            if "new" in choice:
+            if "new" in choice or "begin" in choice or "start" in choice:
                 reslt = self.game_manager.new_game(userName)
-            elif "about" in choice:
+            elif "about" in choice or "info" in choice or "information" in choice or "what" in choice:
                 reslt = self.game_manager.instructions(userName)
             elif "who" in choice:
                 reslt = self.game_manager.player_stats(userName)
