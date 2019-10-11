@@ -1,5 +1,4 @@
 import threading
-
 import time
 import random
 from tweepy.streaming import StreamListener, json
@@ -8,14 +7,12 @@ from tweepy import Stream
 from app.controllers.db_manager import DatabaseManager
 from app.controllers.game_manager import GameManager
 
-##RUN THE APP FROM HERE STUPID.
+##RUN THE APP FROM HERE, STUPID.
 
-ckey= 'rlee33vXmHIlmR5tQljIX0ucD'
-csecret= 'cUiIFESIXSSin9YJHYwLnVwnHpS64Ytj7csY9yFqshvAlkcaPg'
-# After the step above, you will be redirected to your app's page.
-# Create an access token under the the "Your access token" section
-atoken= '2836017980-DxYDsgHqGMyRIq1yH3Uf3Ar63eYCFhqawJAWGOw'
-asecret= 'SruNXYjh0BpY4GQhiflXaxbB2XUhrCMslBrmrH2ViULnu'
+ckey= '*****'
+csecret= '*****'
+atoken= '*****'
+asecret= '*****'
 
 print("test commit")
 

@@ -3,10 +3,10 @@ import time
 import tweepy
 
 
-ckey= '*'
-csecret= '*'
-atoken= '*'
-asecret= '*'
+ckey= '*****'
+csecret= '*****'
+atoken= '*****'
+asecret= '*****'
 
 
 class TwtPrinter:
