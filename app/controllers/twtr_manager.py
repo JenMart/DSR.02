@@ -8,7 +8,7 @@ from app.controllers.db_manager import DatabaseManager
 from app.controllers.game_manager import GameManager
 
 ##RUN THE APP FROM HERE, STUPID.
-
+######
 ckey= '*****'
 csecret= '*****'
 atoken= '*****'
